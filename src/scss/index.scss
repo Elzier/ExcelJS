@@ -1,0 +1,25 @@
+@import '~normalize.css';
+
+@import "header";
+@import "toolbar";
+@import "formula";
+@import "table";
+@import "dashboard";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 11px;
+}
+
+.excel {
+  position: relative;
+  color: $markers-color;
+  height: 100%;
+  max-width: 100%;
+}
