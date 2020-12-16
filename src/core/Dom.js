@@ -11,8 +11,18 @@ class Dom {
     return this.$el.outerHTML.trim()
   }
 
+  text(text) {
+    if (typeof text === 'string') {
+      this.$el.textContent = text
+      return this
+    }
+    if (this.$el.tagName.toLowerCase() === 'input') {
+      return this.$el.value.trim()
+    }
+    return this.$el.textContent.trim()
+  }
+
   on(eventType, callback) {
-    // this.$$listeners[eventType] = callback
     this.$el.addEventListener(eventType, callback)
   }
 
@@ -49,8 +59,38 @@ class Dom {
     return this.$el.dataset
   }
 
+  find(el) {
+    return $(this.$el.querySelector(el))
+  }
+
   findAll(selector) {
     return this.$el.querySelectorAll(selector)
+  }
+
+  addClass(className) {
+    this.$el.classList.add(className)
+    return this
+  }
+
+  removeClass(className) {
+    this.$el.classList.remove(className)
+    return this
+  }
+
+  focus() {
+    this.$el.focus()
+    return this
+  }
+
+  id(parse) {
+    if (parse) {
+      const parsed = this.data.id.split(':')
+      return {
+        row: +parsed[0],
+        col: +parsed[1]
+      }
+    }
+    return this.$el.data.id
   }
 
   css(styles = {}) {
@@ -58,7 +98,6 @@ class Dom {
   }
 }
 
-// event.target
 export function $(selector) {
   return new Dom(selector)
 }
