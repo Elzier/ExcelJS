@@ -59,7 +59,7 @@ module.exports = {
   devtool: inDev ? 'source-map' : false,
   devServer: {
     static: true,
-    port: 8080,
+    port: 8090,
     hot: inDev,
     open: true
   },

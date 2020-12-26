@@ -5,6 +5,8 @@ import {isCell, matrix, nextSelector, shouldResize} from '@/components/table/tab
 import {TableSelection} from '@/components/table/TableSelection'
 import {$} from '@core/Dom'
 import * as allActions from '@/redux/actions'
+import {defaultStyles} from '@/constants'
+import {parse} from '@core/parse'
 
 export class Table extends ExcelComponent {
   constructor($root, options) {
@@ -30,20 +32,29 @@ export class Table extends ExcelComponent {
     this.selectCell(this.$root.find('[data-id="0:0"]'))
 
     this.$on('formula:input', info => {
-      this.selection.current.text(info)
+      console.log(info)
+      this.selection.current
+          .attr('data-value', info)
+          .text(parse(info))
+      this.updateTextInStore(info)
     })
+
     this.$on('formula:done', () => this.selection.current.focus())
 
-    // this.$subscribe(state => console.log('TableState', state))
-  }
-
-  destroy() {
-    super.destroy()
+    this.$on('toolbar:applyStyle', value => {
+      this.selection.applyStyle(value)
+      this.$dispatch(allActions.applyStyle({
+        value,
+        ids: this.selection.selectedIds
+      }))
+    })
   }
 
   selectCell($cell) {
     this.selection.select($cell)
-    this.emitter.emit('table:select', $cell)
+    this.$emit('table:select', $cell)
+    const styles = $cell.getStyles(Object.keys(defaultStyles))
+    this.$dispatch(allActions.changeStyle(styles))
   }
 
   async resizeTable(event) {
@@ -83,8 +94,15 @@ export class Table extends ExcelComponent {
     }
   }
 
+  updateTextInStore(value) {
+    this.$dispatch(allActions.changeText({
+      id: this.selection.current.id(),
+      value
+    }))
+  }
+
   onInput(event) {
-    this.$emit('table:input', $(event.target))
+    this.updateTextInStore($(event.target).text())
   }
 }
 

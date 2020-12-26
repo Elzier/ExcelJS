@@ -1,14 +1,20 @@
+import {toInlineStyles} from '@core/utils'
+import {defaultStyles} from '@/constants'
+import {parse} from '@core/parse'
+
 const CODES = {
   A: 65,
   Z: 90
 }
 
 const DEFAULT_WIDTH = 120
+const DEFAULT_HEIGHT = 25
 
-function createRow(index, content) {
+function createRow(index, content, rowState) {
   const resizer = index ? '<div class="row-resize" data-resize="row"></div>' : ''
+  const height = rowHeight(rowState, index)
   return `
-    <div class=row data-type="resizable">
+    <div class=row data-type="resizable" data-row="${index}" style="height: ${height}">
         <div class="row__info">
           ${index ? index : ''}
           ${resizer}
@@ -35,22 +41,30 @@ function createColumn({col, index, width}) {
 function createCell(state, row) {
   return function(_, col) {
     const width = colWidth(state.colState, col)
+    const id = `${row}:${col}`
+    const text = state.dataState[id] || ''
+    const styles = toInlineStyles({...defaultStyles, ...state.stylesState[id]})
     return `
-      <div class="row__cell" 
+      <div class="row__cell"
       contenteditable
       data-type="cell"
       data-cell="${col}" 
-      data-id="${row}:${col}"
-      style="width: ${width}"
-      ></div>`
+      data-id="${id}"
+      data-value="${text}"
+      style="${styles} width: ${width}"
+      >${parse(text) || ''}</div>`
   }
 }
 
 function colWidth(colState, index) {
-  return (colState[index]|| DEFAULT_WIDTH) + 'px'
+  return (colState[index] || DEFAULT_WIDTH) + 'px'
 }
 
-function getWidth(state) {
+function rowHeight(rowState, index) {
+  return (rowState[index] || DEFAULT_HEIGHT) + 'px'
+}
+
+function assignWidth(state) {
   return function(col, index) {
     return {
       col, index, width: colWidth(state.colState, index)
@@ -65,11 +79,11 @@ export function createTable(rowsCount = 15, state = {}) {
   const cols = new Array(colsCount) 
       .fill('')
       .map(toChar)
-      .map(getWidth(state))
+      .map(assignWidth(state))
       .map(createColumn)
       .join('')
 
-  rows.push(createRow(null, cols))
+  rows.push(createRow(null, cols, {}))
 
   for (let row = 0; row < rowsCount; ++row) {
     const cell = new Array(colsCount)
@@ -77,7 +91,7 @@ export function createTable(rowsCount = 15, state = {}) {
         .map(createCell(state, row))
         .join('')
 
-    rows.push(createRow(row + 1, cell))
+    rows.push(createRow( row + 1, cell, state.rowState))
   }
 
   return rows.join('')

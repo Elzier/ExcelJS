@@ -2,7 +2,6 @@ export function createStore(rootReducer, initialState = {}) {
   let state = rootReducer({...initialState}, {type: '__INIT__'})
   let subscribers = []
 
-
   return {
     subscribe(fn) {
       subscribers.push(fn)
@@ -11,7 +10,6 @@ export function createStore(rootReducer, initialState = {}) {
           subscribers = subscribers.filter(l => l !== fn)
         }
       }
-      // return () => subscribers = subscribers.filter(l => l !== fn)
     },
 
     dispatch(action) {
@@ -20,8 +18,7 @@ export function createStore(rootReducer, initialState = {}) {
     },
 
     getState() {
-      return state
+      return JSON.parse(JSON.stringify(state))
     }
-
   }
 }

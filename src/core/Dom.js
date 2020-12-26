@@ -12,7 +12,7 @@ class Dom {
   }
 
   text(text) {
-    if (typeof text === 'string') {
+    if (typeof text !== 'undefined' ) {
       this.$el.textContent = text
       return this
     }
@@ -90,11 +90,23 @@ class Dom {
         col: +parsed[1]
       }
     }
-    return this.$el.data.id
+    return this.data.id
   }
 
   css(styles = {}) {
     Object.keys(styles).forEach(key => this.$el.style[key] = styles[key])
+  }
+
+  getStyles(styles = []) {
+    return styles.reduce((result, s) => {
+      result[s] = this.$el.style[s]
+      return result
+    }, {})
+  }
+
+  attr(name, value = '') {
+    this.$el.setAttribute(name, value)
+    return this
   }
 }
 
