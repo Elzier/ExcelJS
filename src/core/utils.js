@@ -48,3 +48,8 @@ export function deBounce(fn, wait) {
     timeout = setTimeout(later, wait)
   }
 }
+
+export function preventToDefault(event) {
+  event.preventDefault()
+}
+
