@@ -1,13 +1,14 @@
 import {$} from '../Dom'
 import {ActiveRoute} from './ActiveRoute'
+import {Loader} from '@/components/Loader'
 
 export class Router {
   constructor(selector, routes) {
     this.$placeholder = $(selector)
     this.routes = routes
+    this.page = null
     this.changePageHandler = this.changePageHandler.bind(this)
     this.init()
-    this.page = null
   }
 
   init() {
@@ -15,14 +16,17 @@ export class Router {
     this.changePageHandler()
   }
 
-  changePageHandler(event) {
-    this.$placeholder.clear()
+  async changePageHandler(event) {
+    this.loader = new Loader()
     if (this.page) {
       this.page.destroy()
     }
+
+    this.$placeholder.clear().append(this.loader)
     const Page = ActiveRoute.path.includes('excel') ? this.routes.excel : this.routes.dashboard
     this.page = new Page(ActiveRoute.attr)
-    this.$placeholder.append(this.page.getRoot())
+    const root = await this.page.getRoot()
+    this.$placeholder.clear().append(root)
     this.page.afterRender()
   }
 
