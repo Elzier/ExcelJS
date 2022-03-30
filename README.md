@@ -1,4 +1,5 @@
-# ExcelJs <img align="left" alt="Excel Js" src="https://raw.githubusercontent.com/Elzier/ExcelJS/c84ffd99ee7642de3cc0f30a7967a82975e21170/src/assets/img/excelIcon.svg" />
+# ExcelJs <img align="left" alt="Excel Js" src="https://raw.githubusercontent.com/Elzier/ExcelJS/c84ffd99ee7642de3cc0f30a7967a82975e21170/src/assets/img/excelIcon.svg" style="padding-right:10px; padding-top:20px;" />
+
 
 The browser version of Excel is written in native JavaScript. The main goal of the project is to implement non-standard
 technical tasks without using modern frameworks. According to the idea, this approach allowed me to better understand
